@@ -1,0 +1,11 @@
+.chart-container {
+  margin-top: 1rem;
+}
+
+.recharts-wrapper {
+  margin: 0 auto;
+}
+
+.recharts-tooltip-wrapper {
+  z-index: 1000;
+}
