@@ -43,7 +43,7 @@ const TopTracks = ({ period }) => {
           <div key={index} className="top-track-item">
             <div className="track-rank">{index + 1}</div>
             <img 
-              src={track.image[2]['#text'] || '/placeholder.png'} 
+              src={track.image?.[2]?.['#text'] || track.image?.[3]?.['#text'] || track.image?.[1]?.['#text'] || 'https://via.placeholder.com/50x50/1e2538/9aa0a6?text=♪'} 
               alt={track.name}
               className="track-image"
             />
