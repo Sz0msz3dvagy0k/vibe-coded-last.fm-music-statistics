@@ -80,6 +80,27 @@ cargo build --release --target x86_64-unknown-linux-musl
 # -> target/x86_64-unknown-linux-musl/release/lastfm-backend  (~5-8 MB stripped)
 ```
 
+## 🐳 Docker
+
+The `backend/Dockerfile` uses a two-stage build:
+
+1. **Builder** – `rust:alpine` compiles the release binary against musl libc.
+2. **Runtime** – `alpine:3` with only `ca-certificates` added (~10 MB total).
+
+```bash
+# Build the image from the backend directory
+cd backend
+docker build -t lastfm-backend .
+
+# Run (pass credentials as environment variables)
+docker run --rm -p 3001:3001 \
+  -e LASTFM_API_KEY=your_key \
+  -e LASTFM_USERNAME=your_user \
+  -e SPOTIFY_CLIENT_ID=your_client_id \
+  -e SPOTIFY_CLIENT_SECRET=your_client_secret \
+  lastfm-backend
+```
+
 ### Example curl
 
 ```bash
@@ -103,7 +124,7 @@ navidrome-dash/
 │   │   ├── config.rs    # Typed config from environment variables
 │   │   ├── services/    # Last.fm & Spotify API clients (with caching)
 │   │   └── routes/      # REST endpoint handlers
-│   ├── nodejs/          # Original Node.js source (reference only)
+│   ├── Dockerfile       # Multi-stage Docker image
 │   ├── Cargo.toml       # Rust dependencies
 │   └── .env.example     # Environment variable template
 ├── frontend/            # React application
