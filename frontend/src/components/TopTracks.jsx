@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { lastfmAPI } from '../services/api';
+import { subsonicAPI } from '../services/subsonic';
 import './TopTracks.css';
 
 const TopTracks = ({ period }) => {
@@ -11,7 +12,22 @@ const TopTracks = ({ period }) => {
       setLoading(true);
       try {
         const data = await lastfmAPI.getTopTracks(period, 10);
-        setTracks(data.toptracks.track);
+        const rawTracks = data.toptracks.track;
+        const useSubsonic = subsonicAPI.isConfigured();
+
+        const tracksWithImages = await Promise.all(
+          rawTracks.map(async (track) => {
+            if (useSubsonic) {
+              const artistName = track.artist?.name || '';
+              const coverArtId = await subsonicAPI.getSongCoverArtId(track.name, artistName);
+              if (coverArtId) {
+                return { ...track, _coverArtUrl: subsonicAPI.getCoverArtUrl(coverArtId, 64) };
+              }
+            }
+            return track;
+          })
+        );
+        setTracks(tracksWithImages);
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -44,6 +60,7 @@ const TopTracks = ({ period }) => {
             <div className="track-rank">{index + 1}</div>
             <img 
               src={(() => {
+                if (track._coverArtUrl) return track._coverArtUrl;
                 const imgUrl = track.image?.[3]?.['#text'] || track.image?.[2]?.['#text'] || track.image?.[1]?.['#text'] || track.image?.[0]?.['#text'];
                 return (imgUrl && imgUrl.trim() !== '') ? imgUrl : 'https://via.placeholder.com/50x50/1e2538/9aa0a6?text=♪';
               })()}
