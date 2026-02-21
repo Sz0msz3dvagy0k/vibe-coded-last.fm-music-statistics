@@ -13,6 +13,9 @@ dist/
 build/
 *.log
 
+# Rust build artifacts
+backend/target/
+
 # IDE
 .vscode/
 .idea/
