@@ -16,6 +16,9 @@ build/
 # Rust build artifacts
 backend/target/
 
+*.md
+!README.md
+
 # IDE
 .vscode/
 .idea/
