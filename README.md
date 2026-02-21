@@ -3,7 +3,7 @@
 A modern music listening activity dashboard using Last.fm and Spotify APIs. Features real-time statistics, colorful visualizations, and a beautiful Navidrome-inspired UI.
 
 ![Status](https://img.shields.io/badge/status-ready-brightgreen)
-![Node](https://img.shields.io/badge/node-18%2B-green)
+![Rust](https://img.shields.io/badge/rust-1.75%2B-orange)
 ![React](https://img.shields.io/badge/react-18-blue)
 
 ## ✨ Features
@@ -19,8 +19,8 @@ A modern music listening activity dashboard using Last.fm and Spotify APIs. Feat
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18 or higher
-- npm or yarn
+- Rust 1.75 or higher (`rustup install stable`)
+- Node.js 18+ and npm (frontend only)
 
 ### Installation
 
@@ -32,7 +32,8 @@ cd navidrome-dash
 2. **Set up Backend**
 ```bash
 cd backend
-npm install
+cp .env.example .env
+# Edit .env with your API credentials
 ```
 
 3. **Set up Frontend**
@@ -46,7 +47,7 @@ npm install
 **Terminal 1 - Backend:**
 ```bash
 cd backend
-npm start
+cargo run --release
 # Server runs on http://localhost:3001
 ```
 
@@ -59,16 +60,52 @@ npm run dev
 
 **Open** http://localhost:5173 in your browser 🎉
 
+## 🔨 Building a Production Binary
+
+```bash
+cd backend
+
+# Build an optimised, stripped single binary
+cargo build --release
+
+# The binary is at:
+#   backend/target/release/lastfm-backend
+#
+# Further size reduction with upx (optional):
+#   upx --best target/release/lastfm-backend
+
+# Cross-compile for Linux x86_64 from any host:
+rustup target add x86_64-unknown-linux-musl
+cargo build --release --target x86_64-unknown-linux-musl
+# -> target/x86_64-unknown-linux-musl/release/lastfm-backend  (~5-8 MB stripped)
+```
+
+### Example curl
+
+```bash
+# Health check
+curl -s http://localhost:3001/api/health
+
+# Top artists (last 7 days, top 5)
+curl -s "http://localhost:3001/api/lastfm/top-artists?period=7day&limit=5"
+
+# Spotify artist image lookup
+curl -s "http://localhost:3001/api/spotify/artist?name=Radiohead"
+```
+
 ## 📁 Project Structure
 
 ```
 navidrome-dash/
-├── backend/              # Node.js Express API
+├── backend/              # Rust/axum API server
 │   ├── src/
-│   │   ├── server.js    # Main server
-│   │   ├── services/    # API integrations
-│   │   └── routes/      # REST endpoints
-│   └── .env             # API keys (included)
+│   │   ├── main.rs      # Server bootstrap, middleware, graceful shutdown
+│   │   ├── config.rs    # Typed config from environment variables
+│   │   ├── services/    # Last.fm & Spotify API clients (with caching)
+│   │   └── routes/      # REST endpoint handlers
+│   ├── nodejs/          # Original Node.js source (reference only)
+│   ├── Cargo.toml       # Rust dependencies
+│   └── .env.example     # Environment variable template
 ├── frontend/            # React application
 │   ├── src/
 │   │   ├── App.jsx      # Main component
@@ -90,10 +127,13 @@ navidrome-dash/
 ## 🔧 Tech Stack
 
 ### Backend
-- **Node.js** + **Express** - REST API server
-- **Axios** - HTTP client for external APIs
-- **node-cache** - Response caching
-- **dotenv** - Environment configuration
+- **Rust** + **axum** + **tokio** - Async REST API server
+- **reqwest** - Async HTTP client for external APIs
+- **moka** - High-performance in-memory cache
+- **tower-http** - CORS, request logging, timeouts, body-size limits
+- **tracing** / **tracing-subscriber** - Structured logging
+- **dotenvy** - `.env` file loading
+- **serde** / **serde_json** - JSON serialisation
 
 ### Frontend  
 - **React 18** - UI framework
@@ -107,12 +147,20 @@ navidrome-dash/
 
 ## 📊 API Endpoints
 
+### Health
+- `GET /api/health` - Service health check
+
 ### Last.fm
 - `GET /api/lastfm/user-info` - User profile
-- `GET /api/lastfm/recent-tracks` - Recent plays
-- `GET /api/lastfm/top-artists` - Top artists
-- `GET /api/lastfm/top-tracks` - Top tracks
-- `GET /api/lastfm/top-albums` - Top albums
+- `GET /api/lastfm/recent-tracks?limit=10` - Recent plays
+- `GET /api/lastfm/top-artists?period=overall&limit=10` - Top artists
+- `GET /api/lastfm/top-tracks?period=overall&limit=10` - Top tracks
+- `GET /api/lastfm/top-albums?period=overall&limit=10` - Top albums
+- `GET /api/lastfm/weekly-charts` - Weekly chart list
+- `GET /api/lastfm/weekly-artist-chart?from=UNIX&to=UNIX` - Weekly artist chart
+
+#### Valid `period` values
+`overall` | `7day` | `1month` | `3month` | `6month` | `12month`
 
 ### Spotify
 - `GET /api/spotify/artist?name=ArtistName` - Search artist
@@ -121,29 +169,75 @@ navidrome-dash/
 
 ## 🎯 Configuration
 
-API credentials are pre-configured in `backend/.env`:
-- **Last.fm Username**: sz0msz3d
-- **Last.fm API Key**: Included
-- **Spotify Client ID**: Included
-- **Spotify Client Secret**: Included
+Copy `backend/.env.example` to `backend/.env` and fill in your credentials:
 
-To use your own credentials, edit `backend/.env`.
+```env
+LASTFM_API_KEY=your_api_key
+LASTFM_USERNAME=your_username
+SPOTIFY_CLIENT_ID=your_client_id
+SPOTIFY_CLIENT_SECRET=your_client_secret
+
+# Optional tuning (defaults shown)
+PORT=3001
+LASTFM_CACHE_TTL_SECS=300
+SPOTIFY_CACHE_TTL_SECS=3600
+SPOTIFY_TOKEN_TTL_SECS=3000
+BODY_LIMIT_BYTES=1048576
+REQUEST_TIMEOUT_SECS=30
+```
+
+## 🏭 Production Hardening
+
+The Rust backend ships with the following production features out of the box:
+
+| Feature | Implementation |
+|---|---|
+| Graceful shutdown | `SIGTERM` / `Ctrl-C` drain in-flight requests |
+| Request timeout | `tower-http TimeoutLayer` (default 30 s) |
+| Body size limit | `tower-http RequestBodyLimitLayer` (default 1 MB) |
+| CORS | `tower-http CorsLayer` |
+| Structured logging | `tracing` + `tracing-subscriber` (set `RUST_LOG=debug` for verbose) |
+| In-memory caching | `moka` with configurable TTL |
+| Connection pooling | `reqwest` connection pool (10 idle connections per host) |
+| TLS (upstream) | Keep nginx as TLS terminator; the binary talks plain HTTP internally |
+| Panic safety | `panic = "abort"` + tokio runtime catches panicking tasks |
+
+### Nginx reverse-proxy snippet
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name example.com;
+
+    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;
+    ssl_prefer_server_ciphers off;
+
+    location /api/ {
+        proxy_pass         http://127.0.0.1:3001;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_read_timeout 35s;
+    }
+}
+```
 
 ## 🔄 Development
 
-### Backend Development
 ```bash
+# Run with hot-reload (requires cargo-watch)
 cd backend
-npm run dev
-```
+cargo install cargo-watch
+cargo watch -x run
 
-### Frontend Development
-```bash
+# Frontend dev server
 cd frontend
 npm run dev
 ```
 
-Changes auto-reload with hot module replacement!
+Set `RUST_LOG=debug` for verbose request tracing.
 
 ## 📝 Documentation
 
@@ -156,7 +250,7 @@ Changes auto-reload with hot module replacement!
 
 **All systems operational!** ✨
 
-- ✅ Backend API running
+- ✅ Rust backend compiles to a single native binary
 - ✅ Frontend UI rendering
 - ✅ Last.fm integration working
 - ✅ Spotify integration working
@@ -170,6 +264,7 @@ Changes auto-reload with hot module replacement!
 - **Spotify API** - Artist/album imagery
 - **Recharts** - Data visualization library
 - **React** - UI framework
+- **axum** - Rust web framework
 
 ## 📄 License
 
@@ -177,4 +272,4 @@ ISC
 
 ---
 
-**Built with ❤️ using React and Node.js**
+**Built with ❤️ using React and Rust**
