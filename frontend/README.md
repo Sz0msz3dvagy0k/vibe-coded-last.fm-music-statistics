@@ -34,6 +34,23 @@ To configure the base path:
 
 When deploying to a subdirectory, ensure your web server is configured to serve the application from that path.
 
+### Backend API URL
+
+Configure the backend server address and port:
+
+1. Edit the `.env` file in the frontend directory
+2. Set the `VITE_API_URL` variable:
+   ```env
+   VITE_API_URL=https://music.szomszed.me/api
+   ```
+
+**Examples:**
+- Local development: `VITE_API_URL=http://localhost:3001/api`
+- Production: `VITE_API_URL=https://api.example.com/api`
+- Custom domain: `VITE_API_URL=https://music.szomszed.me/api`
+
+**Note:** After changing environment variables, rebuild the application with `npm run build`
+
 ## React Compiler
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).

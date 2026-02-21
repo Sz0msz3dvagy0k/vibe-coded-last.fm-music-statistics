@@ -271,6 +271,28 @@ The built files in `dist/` will now work when served from `/dashboard/` on your 
 
 **Note:** Ensure your web server (nginx, Apache, etc.) is configured to serve the app from the specified path.
 
+### Frontend Backend API URL
+
+Configure the backend server address and port that the frontend connects to:
+
+1. Edit `frontend/.env` and set the backend URL:
+   ```env
+   VITE_API_URL=https://music.szomszed.me/api
+   ```
+
+2. Rebuild the frontend:
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+**Examples:**
+- Local development: `VITE_API_URL=http://localhost:3001/api`
+- Production: `VITE_API_URL=https://api.example.com/api`
+- Same domain: `VITE_API_URL=https://music.szomszed.me/api`
+
+**Note:** Remember to rebuild after changing environment variables.
+
 ## 🔄 Development
 
 ```bash
