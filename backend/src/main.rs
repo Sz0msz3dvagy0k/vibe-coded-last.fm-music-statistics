@@ -85,7 +85,7 @@ fn build_app(config: &Config) -> Router {
     let subsonic_router = Router::new()
         .route("/ping", get(routes::subsonic::ping))
         .route("/search", get(routes::subsonic::search))
-        .route("/cover-art/:id", get(routes::subsonic::cover_art))
+        .route("/cover-art/{id}", get(routes::subsonic::cover_art))
         .with_state(subsonic_client);
 
     // Layers are applied inside-out: TraceLayer is innermost (first added),
