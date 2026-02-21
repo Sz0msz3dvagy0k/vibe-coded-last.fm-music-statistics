@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { lastfmAPI } from './services/api';
 import Header from './components/Header';
-import UserStats from './components/UserStats';
-import RecentTracks from './components/RecentTracks';
-import TopArtists from './components/TopArtists';
-import TopTracks from './components/TopTracks';
-import ListeningChart from './components/ListeningChart';
 import './App.css';
+
+// Lazy load heavy components
+const UserStats = lazy(() => import('./components/UserStats'));
+const RecentTracks = lazy(() => import('./components/RecentTracks'));
+const TopArtists = lazy(() => import('./components/TopArtists'));
+const TopTracks = lazy(() => import('./components/TopTracks'));
+const ListeningChart = lazy(() => import('./components/ListeningChart'));
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -62,7 +64,9 @@ function App() {
       <Header />
       
       <main className="container">
-        {userInfo && <UserStats userInfo={userInfo} />}
+        <Suspense fallback={<div className="skeleton" style={{ width: '200px', height: '40px', margin: '2rem auto' }} />}>
+          {userInfo && <UserStats userInfo={userInfo} />}
+        </Suspense>
         
         <div className="period-selector mb-3">
           <button 
@@ -91,15 +95,19 @@ function App() {
           </button>
         </div>
 
-        <div className="grid grid-2 mb-3">
-          <RecentTracks />
-          <ListeningChart period={period} />
-        </div>
+        <Suspense fallback={<div className="grid grid-2 mb-3">{[1, 2].map(i => <div key={i} className="skeleton" style={{ height: '300px' }} />)}</div>}>
+          <div className="grid grid-2 mb-3">
+            <RecentTracks />
+            <ListeningChart period={period} />
+          </div>
+        </Suspense>
 
-        <div className="grid grid-2">
-          <TopArtists period={period} />
-          <TopTracks period={period} />
-        </div>
+        <Suspense fallback={<div className="grid grid-2">{[1, 2].map(i => <div key={i} className="skeleton" style={{ height: '300px' }} />)}</div>}>
+          <div className="grid grid-2">
+            <TopArtists period={period} />
+            <TopTracks period={period} />
+          </div>
+        </Suspense>
       </main>
     </div>
   );

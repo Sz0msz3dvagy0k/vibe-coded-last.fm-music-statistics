@@ -1,4 +1,3 @@
-import React from 'react';
 import './UserStats.css';
 
 const UserStats = ({ userInfo }) => {

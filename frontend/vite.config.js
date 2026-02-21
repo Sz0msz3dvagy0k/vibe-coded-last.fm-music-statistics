@@ -8,5 +8,18 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     base: env.VITE_BASE_PATH || '/',
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Split vendor chunks
+            'react-vendor': ['react', 'react-dom'],
+            'chart-vendor': ['recharts'],
+          },
+        },
+      },
+      // Increase chunk size warning limit since we're splitting
+      chunkSizeWarningLimit: 600,
+    },
   }
 })
