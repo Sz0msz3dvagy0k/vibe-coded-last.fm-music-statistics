@@ -56,7 +56,7 @@ const TopArtists = ({ period }) => {
           <div key={index} className="artist-card">
             <div className="artist-rank">{index + 1}</div>
             <img 
-              src={artist.image || '/placeholder.png'} 
+              src={artist.image || 'https://via.placeholder.com/300x300/1e2538/9aa0a6?text=♪'} 
               alt={artist.name}
               className="artist-image"
             />

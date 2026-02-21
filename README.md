@@ -129,6 +129,32 @@ API credentials are pre-configured in `backend/.env`:
 
 To use your own credentials, edit `backend/.env`.
 
+### Frontend Base Path
+
+The frontend can be deployed under different base paths (e.g., `/dashboard/`, `/music/`) instead of the root path `/`.
+
+**To configure:**
+
+1. Create a `.env` file in the `frontend/` directory:
+   ```bash
+   cp frontend/.env.example frontend/.env
+   ```
+
+2. Edit the `.env` file and set your desired base path:
+   ```env
+   VITE_BASE_PATH=/dashboard/
+   ```
+
+3. Build the frontend:
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+The built files in `dist/` will now work when served from `/dashboard/` on your web server.
+
+**Note:** Ensure your web server (nginx, Apache, etc.) is configured to serve the app from the specified path.
+
 ## 🔄 Development
 
 ### Backend Development

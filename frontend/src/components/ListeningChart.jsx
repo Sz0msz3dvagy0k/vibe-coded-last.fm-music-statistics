@@ -42,20 +42,20 @@ const ListeningChart = ({ period }) => {
       <h2 className="section-title">📊 Top Artists Chart</h2>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={chartData} margin={{ top: 5, right: 5, bottom: 70, left: 5 }}>
+          <BarChart data={chartData} margin={{ top: 5, right: 5, bottom: 90, left: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
             <XAxis 
               dataKey="name" 
-              stroke="var(--text-secondary)"
-              tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
+              stroke="white"
+              tick={{ fill: 'white', fontSize: 11 }}
               angle={-45}
               textAnchor="end"
-              height={60}
+              height={80}
               interval={0}
             />
             <YAxis 
-              stroke="var(--text-secondary)"
-              tick={{ fill: 'var(--text-secondary)' }}
+              stroke="white"
+              tick={{ fill: 'white' }}
             />
             <Tooltip 
               contentStyle={{
