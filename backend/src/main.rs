@@ -25,6 +25,7 @@ use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 use config::Config;
+use routes::subsonic::SharedClient;
 use services::{lastfm::LastFmService, spotify::SpotifyService};
 
 // ── health endpoint ──────────────────────────────────────────────────────────
@@ -51,6 +52,15 @@ fn build_app(config: &Config) -> Router {
     let lastfm = Arc::new(LastFmService::new(config));
     let spotify = Arc::new(SpotifyService::new(config));
 
+    // Shared HTTP client for the Subsonic proxy
+    let subsonic_client: SharedClient = Arc::new(
+        reqwest::Client::builder()
+            .timeout(Duration::from_secs(config.request_timeout_secs))
+            .pool_max_idle_per_host(10)
+            .build()
+            .expect("failed to build subsonic HTTP client"),
+    );
+
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(Any)
@@ -72,6 +82,12 @@ fn build_app(config: &Config) -> Router {
         .route("/track", get(routes::spotify::search_track))
         .with_state(spotify);
 
+    let subsonic_router = Router::new()
+        .route("/ping", get(routes::subsonic::ping))
+        .route("/search", get(routes::subsonic::search))
+        .route("/cover-art/:id", get(routes::subsonic::cover_art))
+        .with_state(subsonic_client);
+
     // Layers are applied inside-out: TraceLayer is innermost (first added),
     // RequestBodyLimitLayer is outermost (last added) so it rejects
     // oversized bodies before any other middleware runs.
@@ -79,6 +95,7 @@ fn build_app(config: &Config) -> Router {
         .route("/api/health", get(health))
         .nest("/api/lastfm", lastfm_router)
         .nest("/api/spotify", spotify_router)
+        .nest("/api/subsonic", subsonic_router)
         .fallback(fallback)
         .layer(TraceLayer::new_for_http())
         .layer(cors)

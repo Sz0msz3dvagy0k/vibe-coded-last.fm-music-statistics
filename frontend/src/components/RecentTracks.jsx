@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { lastfmAPI } from '../services/api';
+import { subsonicAPI } from '../services/subsonic';
 import './RecentTracks.css';
 
 const RecentTracks = () => {
@@ -9,8 +10,23 @@ const RecentTracks = () => {
   useEffect(() => {
     const fetchRecentTracks = async () => {
       try {
-        const data = await lastfmAPI.getRecentTracks(10);
-        setTracks(data.recenttracks.track);
+        const data = await lastfmAPI.getRecentTracks(8);
+        const rawTracks = data.recenttracks.track.slice(0, 8);
+        const useSubsonic = subsonicAPI.isConfigured();
+
+        const tracksWithImages = await Promise.all(
+          rawTracks.map(async (track) => {
+            if (useSubsonic) {
+              const artistName = track.artist?.['#text'] || track.artist?.name || '';
+              const coverArtId = await subsonicAPI.getSongCoverArtId(track.name, artistName);
+              if (coverArtId) {
+                return { ...track, _coverArtUrl: subsonicAPI.getCoverArtUrl(coverArtId, 64) };
+              }
+            }
+            return track;
+          })
+        );
+        setTracks(tracksWithImages);
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -41,9 +57,10 @@ const RecentTracks = () => {
         {tracks.slice(0, 8).map((track, index) => (
           <div key={index} className="track-item">
             <img 
-              src={track.image?.[2]?.['#text'] || track.image?.[3]?.['#text'] || track.image?.[1]?.['#text'] || 'https://via.placeholder.com/50x50/1e2538/9aa0a6?text=♪'} 
+              src={track._coverArtUrl || track.image?.[2]?.['#text'] || track.image?.[3]?.['#text'] || track.image?.[1]?.['#text'] || 'https://via.placeholder.com/50x50/1e2538/9aa0a6?text=♪'} 
               alt={track.name}
               className="track-image"
+              onError={(e) => { e.target.src = 'https://via.placeholder.com/50x50/1e2538/9aa0a6?text=♪'; }}
             />
             <div className="track-info">
               <div className="track-name">{track.name}</div>

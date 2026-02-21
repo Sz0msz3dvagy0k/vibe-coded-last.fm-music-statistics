@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { lastfmAPI, spotifyAPI } from '../services/api';
+import { lastfmAPI } from '../services/api';
+import { subsonicAPI } from '../services/subsonic';
 import './TopArtists.css';
 
 const TopArtists = ({ period }) => {
@@ -11,17 +12,18 @@ const TopArtists = ({ period }) => {
       setLoading(true);
       try {
         const data = await lastfmAPI.getTopArtists(period, 8);
+        const useSubsonic = subsonicAPI.isConfigured();
+
         const artistsWithImages = await Promise.all(
           data.topartists.artist.map(async (artist) => {
-            try {
-              const spotifyData = await spotifyAPI.searchArtist(artist.name);
-              return {
-                ...artist,
-                image: spotifyData?.images?.[0]?.url || artist.image[3]['#text']
-              };
-            } catch {
-              return { ...artist, image: artist.image[3]['#text'] };
+            // Try Subsonic first, fall back to Last.fm image
+            if (useSubsonic) {
+              const coverArtId = await subsonicAPI.getArtistCoverArtId(artist.name);
+              if (coverArtId) {
+                return { ...artist, image: subsonicAPI.getCoverArtUrl(coverArtId, 300) };
+              }
             }
+            return { ...artist, image: artist.image?.[3]?.['#text'] || artist.image?.[2]?.['#text'] || null };
           })
         );
         setArtists(artistsWithImages);
