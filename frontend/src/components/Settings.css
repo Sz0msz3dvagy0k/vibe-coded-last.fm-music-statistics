@@ -118,10 +118,11 @@
   transition: border-color var(--anim-hover) steps(1);
 }
 
-/* Flickering focus border */
+/* Highlighted focus border */
 .settings-field input:focus {
   border-color: var(--color-accent);
-  animation: focusFlicker 0.4s steps(3);
+  outline: 2px solid var(--color-mint);
+  outline-offset: 1px;
 }
 
 @keyframes focusFlicker {

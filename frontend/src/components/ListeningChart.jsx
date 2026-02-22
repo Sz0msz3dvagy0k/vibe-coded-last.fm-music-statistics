@@ -16,7 +16,7 @@ const ListeningChart = ({ period }) => {
           name: artist.name.length > 15 ? artist.name.substring(0, 15) + '...' : artist.name,
           plays: parseInt(artist.playcount),
           // Pixel-art palette: alternate mint/accent/off-white tones
-          color: ['#78FECF','#BF4E30','#E5EAFA','#4dca9e','#9a3a20','#C6CCB2','#78FECF','#BF4E30','#E5EAFA','#4dca9e'][index % 10]
+          color: ['#78FECF','#BF4E30','#5fc8a0','#4dca9e','#9a3a20','#7ab08a','#78FECF','#BF4E30','#5fc8a0','#4dca9e'][index % 10]
         }));
         setChartData(formatted);
         setLoading(false);
