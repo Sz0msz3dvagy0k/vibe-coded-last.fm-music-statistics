@@ -1,38 +1,76 @@
+/* ── Top Tracks – leaderboard with pixel scrollbar ── */
 .top-tracks-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0;
+  max-height: 380px;
+  overflow-y: auto;
 }
 
 .top-track-item {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.75rem;
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  transition: all var(--transition-fast);
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  background: var(--color-card);
+  border-bottom: 1px solid var(--color-card-dark);
+  transition: background var(--anim-hover),
+              transform  var(--anim-hover),
+              color       var(--anim-hover);
+}
+
+/* Alternating shades */
+.top-track-item:nth-child(even) {
+  background: #b5bb9f;
 }
 
 .top-track-item:hover {
-  background: var(--bg-tertiary);
+  background: var(--color-bg);
+  color: var(--color-off-white);
   transform: translateX(4px);
 }
 
+.top-track-item:hover .track-name,
+.top-track-item:hover .track-artist,
+.top-track-item:hover .track-playcount,
+.top-track-item:hover .track-label {
+  color: var(--color-off-white);
+}
+
+/* Rank column */
 .track-rank {
   font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--accent-orange);
-  min-width: 30px;
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  min-width: 22px;
   text-align: center;
+  flex-shrink: 0;
+  transition: color var(--anim-hover);
+}
+
+.top-track-item:hover .track-rank {
+  color: var(--color-mint);
+}
+
+/* Small play icon indication */
+.track-rank::before {
+  content: '▶ ';
+  font-size: 0.55rem;
+  opacity: 0;
+  transition: opacity var(--anim-hover);
+}
+
+.top-track-item:hover .track-rank::before {
+  opacity: 1;
 }
 
 .track-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 6px;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--color-bg);
   object-fit: cover;
-  box-shadow: 0 2px 8px var(--shadow);
+  flex-shrink: 0;
+  image-rendering: pixelated;
 }
 
 .track-details {
@@ -41,33 +79,55 @@
 }
 
 .track-name {
-  font-weight: 600;
-  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #1a2010;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color var(--anim-hover);
 }
 
 .track-artist {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+  font-size: 0.72rem;
+  color: #4a5c38;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color var(--anim-hover);
 }
 
 .track-stats {
   text-align: right;
+  flex-shrink: 0;
+}
+
+/* Right-aligned arrow action */
+.track-stats::after {
+  content: ' →';
+  font-size: 0.65rem;
+  color: var(--color-mint);
+  opacity: 0;
+  transition: opacity var(--anim-hover);
+  display: block;
+  text-align: right;
+}
+
+.top-track-item:hover .track-stats::after {
+  opacity: 1;
 }
 
 .track-playcount {
   font-weight: 700;
-  color: var(--text-primary);
-  font-size: 1.1rem;
+  font-size: 0.9rem;
+  color: #1a2010;
+  transition: color var(--anim-hover);
 }
 
 .track-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  font-size: 0.65rem;
+  color: #4a5c38;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color var(--anim-hover);
 }

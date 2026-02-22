@@ -1,103 +1,248 @@
+/* ============================================================
+   PIXEL-ART DESIGN TOKENS
+   ============================================================ */
 :root {
-  --bg-primary: #0a0e1a;
-  --bg-secondary: #131828;
-  --bg-tertiary: #1a2035;
-  --bg-card: #1e2538;
-  
-  --text-primary: #e8eaed;
-  --text-secondary: #9aa0a6;
-  --text-muted: #5f6368;
-  
-  --accent-blue: #4285f4;
-  --accent-purple: #9b59b6;
-  --accent-pink: #e91e63;
-  --accent-green: #34a853;
-  --accent-orange: #fbbc04;
-  
-  --border-color: #2d3548;
-  --shadow: rgba(0, 0, 0, 0.3);
-  
-  --transition-fast: 0.2s ease;
-  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Palette */
+  --color-bg:          #093824;   /* Deep Green/Black – main background */
+  --color-card:        #C6CCB2;   /* Desert Sand – card backgrounds     */
+  --color-off-white:   #E5EAFA;   /* Off-White – light text / highlights */
+  --color-accent:      #BF4E30;   /* Burnt Red – primary accent          */
+  --color-mint:        #78FECF;   /* Mint/Cyan – contrasting accent      */
+
+  /* Derived shades (stay within palette) */
+  --color-bg-darker:   #041a10;
+  --color-card-dark:   #a9af97;   /* slightly darker desert sand         */
+  --color-accent-dark: #9a3a20;
+  --color-mint-dim:    #4dca9e;
+
+  /* Semantic aliases (kept for backward-compat with old component refs) */
+  --bg-primary:    var(--color-bg);
+  --bg-secondary:  #0d4a2b;
+  --bg-tertiary:   #0f5a34;
+  --bg-card:       var(--color-card);
+  --text-primary:  var(--color-off-white);
+  --text-secondary:#b0b89a;
+  --text-muted:    #7a8468;
+  --accent-blue:   var(--color-mint);     /* re-map blue → mint */
+  --accent-purple: #a0729a;
+  --accent-pink:   var(--color-accent);
+  --accent-green:  var(--color-mint);
+  --accent-orange: var(--color-accent);
+  --border-color:  #1a5c38;
+  --shadow:        rgba(0, 0, 0, 0.5);
+
+  /* Spacing / radii */
+  --radius-sm:   2px;
+  --radius-md:   4px;
+  --radius-lg:   6px;
+
+  /* Borders */
+  --border-pixel: 2px solid var(--color-accent);
+  --border-card:  2px solid #1a5c38;
+
+  /* Shadows */
+  --shadow-pixel: 4px 4px 0 #041a10;
+  --shadow-card:  3px 3px 0 #041a10;
+  --shadow-inset: inset 2px 2px 0 rgba(0,0,0,0.4);
+
+  /* Transitions */
+  --transition-fast:   0.15s steps(2);
+  --transition-smooth: 0.25s steps(4);
+
+  /* Animation timings */
+  --anim-load:   0.6s;
+  --anim-hover:  0.08s linear;
 }
 
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  image-rendering: pixelated;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
+  background: var(--color-bg);
+  color: var(--color-off-white);
+  line-height: 1.5;
+  /* subtle ASCII/pixel grid pattern */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 11px,
+      rgba(120,254,207,0.03) 12px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 11px,
+      rgba(120,254,207,0.03) 12px
+    );
 }
 
 #root {
   min-height: 100vh;
+  position: relative;
 }
 
+/* CRT scanline overlay */
+#root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  z-index: 9999;
+}
+
+/* ============================================================
+   PIXEL SCROLLBAR
+   ============================================================ */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: var(--color-bg-darker);
+  border-left: 2px solid var(--color-accent);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-  border-radius: 5px;
+  background: var(--color-accent);
+  border: 1px solid var(--color-bg-darker);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-color);
+  background: var(--color-mint);
 }
 
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0);     }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+@keyframes pixelShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
-.fade-in { animation: fadeIn 0.5s ease-out; }
-.slide-in { animation: slideIn 0.5s ease-out; }
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+@keyframes glint {
+  0%   { left: -60%; opacity: 0; }
+  40%  { opacity: 0.6; }
+  100% { left: 110%;  opacity: 0; }
+}
+
+@keyframes pixelPulse {
+  0%, 100% { transform: scale(1);    opacity: 1;   }
+  50%       { transform: scale(1.08); opacity: 0.85; }
+}
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+.fade-in  { animation: fadeIn  0.4s ease-out both; }
+.slide-in { animation: slideIn 0.4s ease-out both; }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-card) 50%, var(--bg-tertiary) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--bg-tertiary)  50%,
+    var(--bg-secondary) 75%
+  );
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 8px;
+  animation: pixelShimmer 1.5s steps(8) infinite;
+  border: var(--border-card);
 }
 
+/* ============================================================
+   CARD BASE
+   ============================================================ */
 .card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  background: var(--color-card);
+  color: #1a2010;
+  border: var(--border-pixel);
+  border-radius: var(--radius-sm);
   padding: 1.5rem;
-  transition: all var(--transition-smooth);
-  box-shadow: 0 2px 8px var(--shadow);
+  box-shadow: var(--shadow-pixel);
+  transition: box-shadow var(--anim-hover),
+              transform   var(--anim-hover);
+  position: relative;
+  overflow: hidden;
+}
+
+/* pixel shimmer – simple static overlay, no animation re-trigger */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 40%,
+    rgba(255,255,255,0.06) 50%,
+    transparent 60%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--anim-hover);
+}
+
+.card:hover::after {
+  opacity: 1;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px var(--shadow);
-  border-color: var(--accent-blue);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #041a10;
 }
 
+/* Section titles inside cards */
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-bg);
+  margin-bottom: 1.2rem;
+  border-bottom: 2px solid var(--color-accent);
+  padding-bottom: 0.4rem;
+}
+
+/* ============================================================
+   GRID LAYOUT
+   ============================================================ */
 .grid {
   display: grid;
   gap: 1.5rem;
@@ -110,3 +255,21 @@ body {
 .mt-2 { margin-top: 1rem; }
 .mb-2 { margin-bottom: 1rem; }
 .mb-3 { margin-bottom: 1.5rem; }
+
+/* ============================================================
+   ACCESSIBILITY – Reduced Motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Keep scanline overlay but stop it moving */
+  #root::after {
+    animation: none;
+  }
+}

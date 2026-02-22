@@ -1,46 +1,71 @@
+/* ── Pixel-Art Hero Header ── */
 .header {
-  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
-  padding: 3rem 2rem;
+  background: var(--color-bg-darker);
+  border-bottom: 3px solid var(--color-accent);
+  padding: 2.5rem 2rem 2rem;
   text-align: center;
-  box-shadow: 0 4px 20px var(--shadow);
   position: relative;
   overflow: hidden;
+}
+
+/* ASCII/pixel dot pattern background */
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(120,254,207,0.18) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}
+
+/* Scrolling mint scanline */
+.header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-mint);
+  opacity: 0.5;
+  animation: scanline 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0%   { top: 0%; }
+  100% { top: 100%; }
 }
 
 .settings-btn {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  font-size: 1.3rem;
-  padding: 0.4rem 0.6rem;
+  background: var(--color-bg);
+  border: 2px solid var(--color-mint);
+  border-radius: var(--radius-sm);
+  font-size: 1.1rem;
+  padding: 0.35rem 0.55rem;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  box-shadow: 2px 2px 0 var(--color-bg-darker);
+  transition: transform var(--anim-hover),
+              box-shadow var(--anim-hover);
   z-index: 2;
   line-height: 1;
+  font-family: inherit;
 }
 
 .settings-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.1);
+  background: var(--color-mint);
+  color: var(--color-bg);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--color-bg-darker);
 }
 
 .settings-btn--active {
-  background: rgba(52, 168, 83, 0.3);
-  border-color: rgba(52, 168, 83, 0.6);
-}
-
-.header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
-  opacity: 0.3;
+  border-color: var(--color-accent);
+  box-shadow: 2px 2px 0 var(--color-accent-dark);
 }
 
 .header-content {
@@ -58,38 +83,41 @@
 
 .logo-icon {
   font-size: 2.5rem;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  animation: pixelPulse 2.5s steps(4) infinite;
+  display: inline-block;
 }
 
 .header h1 {
-  font-size: 2.5rem;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 2.2rem;
   font-weight: 700;
   margin: 0;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  color: var(--color-mint);
+  text-shadow:
+    3px 3px 0 var(--color-bg-darker),
+    -1px -1px 0 var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .tagline {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.1rem;
+  color: var(--color-off-white);
+  font-size: 0.95rem;
   margin: 0;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
 }
 
 @media (max-width: 768px) {
   .header {
-    padding: 2rem 1rem;
+    padding: 1.75rem 1rem 1.5rem;
   }
 
   .header h1 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
   }
 
   .logo-icon {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 }
