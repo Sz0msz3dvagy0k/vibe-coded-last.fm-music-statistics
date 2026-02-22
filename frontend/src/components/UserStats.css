@@ -1,3 +1,4 @@
+/* ── Pixel Stat Cards ── */
 .user-stats {
   margin-bottom: 2rem;
 }
@@ -5,20 +6,24 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: var(--color-card);
+  color: #1a2010;
+  border: 2px solid var(--color-bg);
+  border-radius: var(--radius-sm);
+  padding: 1.5rem 1rem;
   text-align: center;
-  transition: all var(--transition-smooth);
+  box-shadow: var(--shadow-card);
   position: relative;
   overflow: hidden;
+  transition: transform var(--anim-hover) steps(1),
+              box-shadow var(--anim-hover) steps(1);
 }
 
+/* Accent top stripe */
 .stat-card::before {
   content: '';
   position: absolute;
@@ -26,43 +31,69 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transition: transform var(--transition-smooth);
+  background: var(--accent, var(--color-accent));
 }
 
-.stat-card:hover::before {
-  transform: scaleX(1);
+/* Pixel shimmer on hover */
+.stat-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(255,255,255,0.04) 3px,
+    rgba(255,255,255,0.04) 6px
+  );
+  opacity: 0;
+  transition: opacity var(--anim-hover) steps(2);
+  pointer-events: none;
+}
+
+.stat-card:hover::after {
+  opacity: 1;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--shadow);
-  border-color: var(--accent);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 #041a10;
 }
 
 .stat-icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  animation: bounce 2s ease-in-out infinite;
+  font-size: 2rem;
+  margin-bottom: 0.4rem;
+  display: block;
+  animation: pixelPulse 2.5s steps(4) infinite;
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
 .stat-value {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
+  color: #1a2010;
+  margin-bottom: 0.2rem;
+  animation: countUp 0.6s steps(6) both;
 }
 
 .stat-label {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+  font-size: 0.75rem;
+  color: #4a5c38;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+/* Active-since badge */
+.stat-badge {
+  display: inline-block;
+  margin-top: 0.5rem;
+  background: var(--color-bg);
+  color: var(--color-mint);
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--color-mint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 @media (max-width: 768px) {

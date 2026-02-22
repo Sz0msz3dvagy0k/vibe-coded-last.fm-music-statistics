@@ -1,11 +1,32 @@
+/* ── Listening Chart – retro histogram ── */
 .chart-container {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
-.recharts-wrapper {
-  margin: 0 auto;
+/* Override recharts default styles for pixel aesthetic */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(120,254,207,0.15) !important;
+  stroke-dasharray: 4 4 !important;
 }
 
 .recharts-tooltip-wrapper {
   z-index: 1000;
+}
+
+/* Bar grow-from-baseline on load */
+.recharts-bar-rectangle {
+  animation: barGrow 0.7s steps(8) both;
+}
+
+/* Pixel tooltip */
+.pixel-tooltip {
+  background: var(--color-bg) !important;
+  border: 2px solid var(--color-mint) !important;
+  border-radius: 0 !important;
+  box-shadow: 3px 3px 0 var(--color-bg-darker) !important;
+  font-family: 'Pixelify Sans', monospace !important;
+  font-size: 0.8rem !important;
+  color: var(--color-off-white) !important;
+  padding: 0.4rem 0.7rem !important;
 }
