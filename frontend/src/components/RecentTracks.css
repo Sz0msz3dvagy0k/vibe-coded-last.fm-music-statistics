@@ -26,8 +26,8 @@
   padding: 0.55rem 0.6rem;
   background: var(--color-card);
   border-bottom: 1px solid var(--color-card-dark);
-  transition: background var(--anim-hover) steps(1),
-              transform  var(--anim-hover) steps(1);
+  transition: background var(--anim-hover),
+              transform  var(--anim-hover);
   position: relative;
 }
 
@@ -68,7 +68,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color var(--anim-hover) steps(1);
+  transition: color var(--anim-hover);
 }
 
 .track-artist {
@@ -77,7 +77,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color var(--anim-hover) steps(1);
+  transition: color var(--anim-hover);
 }
 
 .now-playing {

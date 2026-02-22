@@ -51,7 +51,7 @@
 
   /* Animation timings */
   --anim-load:   0.6s;
-  --anim-hover:  0.12s;
+  --anim-hover:  0.08s linear;
 }
 
 /* ============================================================
@@ -202,33 +202,31 @@ body {
   border-radius: var(--radius-sm);
   padding: 1.5rem;
   box-shadow: var(--shadow-pixel);
-  transition: box-shadow var(--anim-hover) steps(2),
-              transform   var(--anim-hover) steps(2);
+  transition: box-shadow var(--anim-hover),
+              transform   var(--anim-hover);
   position: relative;
   overflow: hidden;
+  will-change: transform;
 }
 
-/* pixel shimmer sweep on hover */
+/* pixel shimmer – simple static overlay, no animation re-trigger */
 .card::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: -60%;
-  width: 40%;
-  height: 100%;
+  inset: 0;
   background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,0.12),
-    transparent
+    135deg,
+    transparent 40%,
+    rgba(255,255,255,0.06) 50%,
+    transparent 60%
   );
   pointer-events: none;
   opacity: 0;
-  transition: none;
+  transition: opacity var(--anim-hover);
 }
 
 .card:hover::after {
-  animation: glint 0.6s steps(8) forwards;
+  opacity: 1;
 }
 
 .card:hover {

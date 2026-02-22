@@ -49,8 +49,8 @@
   padding: 0.35rem 0.55rem;
   cursor: pointer;
   box-shadow: 2px 2px 0 var(--color-bg-darker);
-  transition: transform var(--anim-hover) steps(1),
-              box-shadow var(--anim-hover) steps(1);
+  transition: transform var(--anim-hover),
+              box-shadow var(--anim-hover);
   z-index: 2;
   line-height: 1;
   font-family: inherit;

@@ -12,9 +12,10 @@
   aspect-ratio: 1;
   cursor: pointer;
   box-shadow: 3px 3px 0 var(--color-bg-darker);
-  transition: transform  var(--anim-hover) steps(1),
-              box-shadow var(--anim-hover) steps(1);
+  transition: transform  var(--anim-hover),
+              box-shadow var(--anim-hover);
   background: var(--color-bg);
+  will-change: transform;
 }
 
 .artist-card:hover {
@@ -22,9 +23,20 @@
   box-shadow: 5px 5px 0 var(--color-bg-darker);
 }
 
-/* Invert image on hover for pixel-art effect */
-.artist-card:hover .artist-image {
-  filter: invert(1) hue-rotate(100deg) saturate(1.2);
+/* Lightweight mint tint overlay instead of expensive CSS filter */
+.artist-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(120, 254, 207, 0.18);
+  opacity: 0;
+  transition: opacity var(--anim-hover);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.artist-card:hover::after {
+  opacity: 1;
 }
 
 .artist-rank {
@@ -50,7 +62,6 @@
   height: 100%;
   object-fit: cover;
   image-rendering: pixelated;
-  transition: filter var(--anim-hover) steps(1);
   display: block;
 }
 
@@ -62,6 +73,7 @@
   background: rgba(9,56,36,0.92);
   border-top: 2px solid var(--color-mint);
   padding: 0.4rem 0.5rem 0.45rem;
+  z-index: 2;
 }
 
 .artist-name {

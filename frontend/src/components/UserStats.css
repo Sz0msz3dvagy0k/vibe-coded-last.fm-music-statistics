@@ -19,8 +19,9 @@
   box-shadow: var(--shadow-card);
   position: relative;
   overflow: hidden;
-  transition: transform var(--anim-hover) steps(1),
-              box-shadow var(--anim-hover) steps(1);
+  transition: transform var(--anim-hover),
+              box-shadow var(--anim-hover);
+  will-change: transform;
 }
 
 /* Accent top stripe */
@@ -47,7 +48,7 @@
     rgba(255,255,255,0.04) 6px
   );
   opacity: 0;
-  transition: opacity var(--anim-hover) steps(2);
+  transition: opacity var(--anim-hover);
   pointer-events: none;
 }
 
