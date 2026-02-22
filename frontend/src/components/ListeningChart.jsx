@@ -42,17 +42,18 @@ const ListeningChart = ({ period }) => {
       <div className="card slide-in">
       <h2 className="section-title">▓ Top Artists Chart</h2>
       <div className="chart-container">
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={chartData} margin={{ top: 5, right: 5, bottom: 90, left: 5 }}>
-            <CartesianGrid strokeDasharray="4 4" stroke="rgba(120,254,207,0.15)" />
+        <ResponsiveContainer width="100%" height={370}>
+          <BarChart data={chartData} margin={{ top: 8, right: 8, bottom: 110, left: 8 }}>
+            <CartesianGrid strokeDasharray="0" stroke="rgba(120,254,207,0.12)" vertical={false} />
             <XAxis 
               dataKey="name" 
               stroke="#78FECF"
               tick={{ fill: '#78FECF', fontSize: 10, fontFamily: "'Pixelify Sans', monospace" }}
               angle={-45}
               textAnchor="end"
-              height={80}
+              height={100}
               interval={0}
+              dy={4}
             />
             <YAxis 
               stroke="#78FECF"

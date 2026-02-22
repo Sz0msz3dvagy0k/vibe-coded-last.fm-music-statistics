@@ -9,20 +9,19 @@
   padding: 0.5rem 0.25rem 0.5rem 0;
 }
 
-/* Override recharts default styles for pixel aesthetic */
-.recharts-cartesian-grid-horizontal line,
+/* Horizontal guide lines – align to Y-axis ticks */
+.recharts-cartesian-grid-horizontal line {
+  stroke: rgba(120,254,207,0.15) !important;
+  stroke-dasharray: none !important;
+}
+
+/* Remove vertical lines entirely */
 .recharts-cartesian-grid-vertical line {
-  stroke: rgba(120,254,207,0.2) !important;
-  stroke-dasharray: 4 4 !important;
+  display: none !important;
 }
 
 .recharts-tooltip-wrapper {
   z-index: 1000;
-}
-
-/* Bar grow-from-baseline on load */
-.recharts-bar-rectangle {
-  animation: barGrow 0.7s steps(8) both;
 }
 
 /* Pixel tooltip */

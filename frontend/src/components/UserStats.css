@@ -73,7 +73,7 @@
   font-weight: 700;
   color: #1a2010;
   margin-bottom: 0.2rem;
-  animation: countUp 0.6s steps(6) both;
+  animation: countUp 0.4s ease-out both;
 }
 
 .stat-label {
